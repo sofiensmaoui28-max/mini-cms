@@ -7,54 +7,54 @@ class PostController extends Controller
     private function posts(): array
     {
         return [
-            'decouvrir-laravel-13' => [
-                'title' => 'Découvrir Laravel 13',
+            [
+                'slug' => 'bienvenue-sur-mini-cms',
+                'title' => 'Bienvenue sur Mini-CMS',
+                'excerpt' => 'Premier article du projet fil rouge.',
+                'author' => 'Sofien Smaoui',
+                'date' => '2026-11-20',
                 'year' => 2026,
-                'body' => 'Laravel 13 simplifie la structure du projet : la configuration des middlewares et des exceptions se fait dans bootstrap/app.php.',
+                'featured' => true,
             ],
-            'routes-et-controleurs' => [
-                'title' => 'Routes et contrôleurs',
+            [
+                'slug' => 'comprendre-le-routage',
+                'title' => 'Comprendre le routage Laravel',
+                'excerpt' => 'Routes, closures et contrôleurs.',
+                'author' => 'Sofien Smaoui',
+                'date' => '2026-11-19',
                 'year' => 2026,
-                'body' => 'Une route associe une URL à une méthode de contrôleur. Le contrôleur prépare les données, la vue les affiche.',
+                'featured' => false,
             ],
-            'premiers-pas-avec-blade' => [
-                'title' => 'Premiers pas avec Blade',
+            [
+                'slug' => 'retour-sur-2025',
+                'title' => 'Retour sur 2025',
+                'excerpt' => 'Un article de l\'année précédente.',
+                'author' => 'Sofien Smaoui',
+                'date' => '2025-06-10',
                 'year' => 2025,
-                'body' => 'Blade est le moteur de vues de Laravel. Les doubles accolades échappent toujours le contenu affiché.',
+                'featured' => false,
             ],
         ];
     }
 
     public function index()
     {
-        return view('posts.index', [
-            'heading' => 'Tous les articles',
-            'posts' => $this->posts(),
-        ]);
-    }
-        public function archive(string $year)
-    {
-        $posts = array_filter(
-            $this->posts(),
-            fn (array $post) => $post['year'] === (int) $year
-        );
-
-        return view('posts.index', [
-            'heading' => 'Articles de '.$year,
-            'posts' => $posts,
-        ]);
+        return view('posts.index', ['posts' => $this->posts()]);
     }
 
     public function show(string $slug)
     {
-        $posts = $this->posts();
+        $post = collect($this->posts())->firstWhere('slug', $slug);
 
-        if (! array_key_exists($slug, $posts)) {
-            abort(404);
-        }
+        abort_if($post === null, 404);
 
-        return view('posts.show', [
-            'post' => $posts[$slug],
-        ]);
+        return view('posts.show', ['post' => $post]);
+    }
+
+    public function archive(int $year)
+    {
+        $posts = collect($this->posts())->where('year', $year)->all();
+
+        return view('posts.index', ['posts' => $posts]);
     }
 }

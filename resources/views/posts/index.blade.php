@@ -1,31 +1,13 @@
 <x-layout>
-    <x-slot:title>{{ $heading }} - Mini-CMS</x-slot:title>
+    <x-slot:title>Articles - Mini-CMS</x-slot:title>
 
-    <h1 class="text-3xl font-bold">{{ $heading }}</h1>
+    <h1 class="text-3xl font-bold mb-6">Articles</h1>
 
-    <ul class="mt-6 space-y-4">
-        @foreach ($posts as $slug => $post)
-            <li class="rounded border border-gray-200 bg-white p-4">
-                <p class="text-xl font-medium">{{ $post['title'] }}</p>
-                <p class="mt-1 text-sm text-gray-500">Publié en {{ $post['year'] }}</p>
-            </li>
-        @endforeach
-    </ul>
-</x-layout>
-<x-layout>
-    <x-slot:title>{{ $heading }} - Mini-CMS</x-slot:title>
-
-    <h1 class="text-3xl font-bold">{{ $heading }}</h1>
-
-    <ul class="mt-6 space-y-4">
-        @foreach ($posts as $slug => $post)
-            <li class="rounded border border-gray-200 bg-white p-4">
-                <a href="{{ route('posts.show', $slug) }}" class="text-xl font-medium text-red-600 hover:underline">{{ $post['title'] }}</a>
-                <p class="mt-1 text-sm text-gray-500">
-                    Publié en
-                    <a href="{{ route('posts.archive', $post['year']) }}" class="underline">{{ $post['year'] }}</a>
-                </p>
-            </li>
-        @endforeach
-    </ul>
+    <div class="grid gap-4 max-w-2xl">
+        @forelse ($posts as $post)
+            <x-post-card :post="$post" />
+        @empty
+            <p class="text-gray-600">Aucun article.</p>
+        @endforelse
+    </div>
 </x-layout>
