@@ -14,7 +14,7 @@ class PostController extends Controller
     {
         return view('posts.index', [
             'heading' => 'Tous les articles',
-            'posts' => Post::latest('id')->paginate(4),
+            'posts' => Post::with('user', 'category', 'tags')->latest('id')->paginate(4),
         ]);
     }
 
@@ -22,7 +22,7 @@ class PostController extends Controller
     {
         return view('posts.index', [
             'heading' => 'Articles de '.$year,
-             'posts' => Post::published()->whereYear('published_at', $year)->latest('id')->paginate(4),
+             'posts' => Post::published()->with('user', 'category', 'tags')->whereYear('published_at', $year)->latest('id')->paginate(4),
         ]);
     }
 
@@ -49,8 +49,10 @@ class PostController extends Controller
         return redirect()->route('posts.show', $post);
     }
 
-    public function show(Post $post): View
+       public function show(Post $post): View
     {
+        $post->load('user', 'category', 'tags');
+
         return view('posts.show', compact('post'));
     }
 
@@ -63,7 +65,7 @@ class PostController extends Controller
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-                        'slug' => ['required', 'string', 'max:255', 'regex:/^[a-z0-9-]+$/', Rule::unique('posts', 'slug')->ignore($post)],
+             'slug' => ['required', 'string', 'max:255', 'regex:/^[a-z0-9-]+$/', Rule::unique('posts', 'slug')->ignore($post)],
             'excerpt' => ['nullable', 'string', 'max:255'],
             'body' => ['required', 'string', 'min:20'],
             'is_published' => ['nullable', 'boolean'],
