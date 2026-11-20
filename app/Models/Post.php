@@ -24,8 +24,8 @@ class Post extends Model
         ];
     }
 
-    public function scopePublished(Builder $query): void
-    {
-        $query->where('is_published', true);
-    }
+   public function scopePublished(Builder $query): void
+{
+    $query->where('is_published', true);
+}
 }
