@@ -1,41 +1,25 @@
 <?php
 
-namespace App\Http\Controllers;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PostController;
+use Illuminate\Support\Facades\Route;
 
-use App\Models\Category;
-use App\Models\Post;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\View\View;
+Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/a-propos', [PageController::class, 'about'])->name('about');
+Route::get('/heure', [PageController::class, 'time'])->name('time');
 
-class PageController extends Controller
-{
-    public function home(): View
-    {
-        return view('home', [
-            'latestPosts' => Post::published()
-                ->with('user', 'category', 'tags')
-                ->latest('published_at')
-                ->take(3)
-                ->get(),
-            'categories' => Category::withCount(['posts' => fn (Builder $query) => $query->published()])
-                ->orderBy('name')
-                ->get(),
-        ]);
-    }
+Route::get('/posts/archive/{year}', [PostController::class, 'archive'])
+    ->whereNumber('year')
+    ->name('posts.archive');
+Route::get('/posts/categorie/{category:slug}', [PostController::class, 'byCategory'])->name('posts.category');
+Route::get('/posts/tag/{tag:slug}', [PostController::class, 'byTag'])->name('posts.tag');
 
-    public function about(): View
-    {
-        return view('a-propos', [
-            'auteur' => 'Prenom Nom',
-            'groupe' => 'MDW32',
-        ]);
-    }
+Route::middleware('writable')->group(function () {
+    Route::resource('posts', PostController::class);
+    Route::patch('/posts/{post}/publication', [PostController::class, 'togglePublication'])->name('posts.publication');
 
-    public function time(): View
-    {
-        return view('heure', [
-            'heure' => now()->format('H:i'),
-            'date' => now()->format('d/m/Y'),
-        ]);
-    }
-}
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::resource('categories', CategoryController::class)->except('show');
+    });
+});
