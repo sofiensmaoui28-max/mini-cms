@@ -12,7 +12,7 @@ class IndexPostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,7 @@ class IndexPostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
         ];
     }
 }
