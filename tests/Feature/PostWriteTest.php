@@ -1,9 +1,11 @@
 <?php
 
 use App\Models\Post;
+use App\Models\User;
 
 beforeEach(function () {
     $this->withoutVite();
+    $this->actingAs(User::factory()->admin()->create());
 });
 
 function postData(array $overrides = []): array
@@ -77,6 +79,7 @@ it('deletes a post', function () {
 
     $this->assertDatabaseMissing('posts', ['id' => $post->id]);
 });
+
 it('publishes a draft', function () {
     $post = Post::create(postData());
 
