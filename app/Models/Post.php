@@ -9,16 +9,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Post extends Model
-{    /** @use HasFactory<\Database\Factories\PostFactory> */
+{
+    /** @use HasFactory<\Database\Factories\PostFactory> */
     use HasFactory;
+
     protected $fillable = [
         'title',
         'slug',
         'excerpt',
         'body',
         'is_published',
-         'category_id',
         'published_at',
+        'category_id',
     ];
 
     protected function casts(): array
@@ -28,6 +30,7 @@ class Post extends Model
             'published_at' => 'datetime',
         ];
     }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -37,12 +40,29 @@ class Post extends Model
     {
         return $this->belongsTo(Category::class);
     }
-        public function tags(): BelongsToMany
+
+    public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class)->withTimestamps();
     }
-   public function scopePublished(Builder $query): void
-{
-    $query->where('is_published', true);
-}
+
+    public function scopePublished(Builder $query): void
+    {
+        $query->where('is_published', true);
+    }
+
+    public function scopeVisibleTo(Builder $query, ?User $user): void
+    {
+        if ($user?->isAdmin()) {
+            return;
+        }
+
+        $query->where(function (Builder $query) use ($user) {
+            $query->published();
+
+            if ($user !== null) {
+                $query->orWhere('user_id', $user->id);
+            }
+        });
+    }
 }
