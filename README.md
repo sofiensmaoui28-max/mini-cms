@@ -14,4 +14,36 @@
 
 ![Postman : POST /api/posts avec un jeton Bearer, onglet Body, réponse 201 Created](screenshots/s14-postman-201.png)
 
-![Postman : PUT sur l'article d'un autre auteur, réponse 403](screenshots/s14-postman-403.png)
+![Postman : PUT sur l'article d'un autre auteur, réponse 403](screenshots/s14-postman-403.png)# Mini-CMS
+
+## Description
+
+## Fonctionnalités
+
+## Installation
+
+### Bash
+
+### PowerShell
+
+## Comptes de test
+
+## API
+
+### Endpoints
+
+### Authentification par jeton
+
+### Codes d'erreur
+
+### Exemple curl.exe
+
+## Captures d'écran
+
+## Choix d'architecture
+
+### Pourquoi les écritures de l'API passent par PostPolicy
+
+### Pourquoi preventLazyLoading est activé
+
+### Pourquoi l'API utilise des jetons et non la session
